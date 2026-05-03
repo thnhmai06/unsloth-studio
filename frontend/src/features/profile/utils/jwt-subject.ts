@@ -5,17 +5,17 @@
  * Read the JWT `sub` claim for display purposes only (not verified).
  */
 export function decodeJwtSubject(token: string | null): string | null {
-  if (!token) return null;
+  if (!token) return "unsloth";
   try {
     const parts = token.split(".");
-    if (parts.length < 2) return null;
+    if (parts.length < 2) return "unsloth";
     const payload = parts[1];
     const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
     const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
     const json = atob(padded);
     const parsed = JSON.parse(json) as { sub?: unknown };
-    return typeof parsed.sub === "string" ? parsed.sub : null;
+    return typeof parsed.sub === "string" ? parsed.sub : "unsloth";
   } catch {
-    return null;
+    return "unsloth";
   }
 }

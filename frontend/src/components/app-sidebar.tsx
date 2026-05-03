@@ -225,15 +225,12 @@ export function AppSidebar() {
         {/* Expanded: compact logo + close toggle */}
         <div className="flex items-center justify-between gap-[8.5px] group-data-[collapsible=icon]:hidden">
           <Link
-            to="/chat"
+            to="/studio"
             onClick={(event) => {
               event.preventDefault();
-              if (chatDisabled) return;
-              setActiveThreadId(null);
               closeMobileIfOpen();
               void navigate({
-                to: "/chat",
-                search: { new: createNavigationNonce() },
+                to: "/studio",
               });
             }}
             className="flex items-center gap-[6px] select-none"

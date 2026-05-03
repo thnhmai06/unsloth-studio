@@ -141,19 +141,6 @@ async def lifespan(app: FastAPI):
 
     threading.Thread(target = _precache, daemon = True).start()
 
-    if storage.ensure_default_admin():
-        bootstrap_pw = storage.get_bootstrap_password()
-        app.state.bootstrap_password = bootstrap_pw
-
-        bootstrap_path = storage.DB_PATH.parent / ".bootstrap_password"
-        print("\n" + "=" * 60)
-        print("DEFAULT ADMIN ACCOUNT CREATED")
-        print(f"    username: {storage.DEFAULT_ADMIN_USERNAME}")
-        print(f"    password saved to: {bootstrap_path}")
-        print("    Open the Studio UI to sign in and change it.")
-        print("=" * 60 + "\n")
-    else:
-        app.state.bootstrap_password = storage.get_bootstrap_password()
     yield
     # Cleanup
     _hw_module.DEVICE = None
@@ -347,31 +334,8 @@ def _strip_crossorigin(html_bytes: bytes) -> bytes:
 
 
 def _inject_bootstrap(html_bytes: bytes, app: FastAPI) -> bytes:
-    """Inject bootstrap credentials into HTML when password change is required.
-
-    The script tag is only injected while the default admin account still
-    has ``must_change_password=True``.  Once the user changes the password
-    the HTML is served clean — no credentials leak.
-    """
-    import json as _json
-
-    if not storage.requires_password_change(storage.DEFAULT_ADMIN_USERNAME):
-        return html_bytes
-
-    bootstrap_pw = getattr(app.state, "bootstrap_password", None)
-    if not bootstrap_pw:
-        return html_bytes
-
-    payload = _json.dumps(
-        {
-            "username": storage.DEFAULT_ADMIN_USERNAME,
-            "password": bootstrap_pw,
-        }
-    )
-    tag = f"<script>window.__UNSLOTH_BOOTSTRAP__={payload}</script>"
-    html = html_bytes.decode("utf-8")
-    html = html.replace("</head>", f"{tag}</head>", 1)
-    return html.encode("utf-8")
+    """Authentication bypassed: no injection needed."""
+    return html_bytes
 
 
 def setup_frontend(app: FastAPI, build_path: Path):

@@ -36,19 +36,12 @@ router = APIRouter()
 @router.get("/status", response_model = AuthStatusResponse)
 async def auth_status() -> AuthStatusResponse:
     """
-    Check whether auth has already been initialized.
-
-    - initialized = False -> frontend should wait for the seeded admin bootstrap.
-    - initialized = True  -> frontend should show login or force the first password change.
+    Bypass auth status check. Always return initialized and no password change required.
     """
     return AuthStatusResponse(
-        initialized = storage.is_initialized(),
+        initialized = True,
         default_username = storage.DEFAULT_ADMIN_USERNAME,
-        requires_password_change = storage.requires_password_change(
-            storage.DEFAULT_ADMIN_USERNAME
-        )
-        if storage.is_initialized()
-        else True,
+        requires_password_change = False,
     )
 
 

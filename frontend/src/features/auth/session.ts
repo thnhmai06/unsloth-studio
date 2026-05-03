@@ -9,7 +9,7 @@ export const AUTH_REFRESH_TOKEN_KEY = "unsloth_auth_refresh_token";
 export const ONBOARDING_DONE_KEY = "unsloth_onboarding_done";
 export const AUTH_MUST_CHANGE_PASSWORD_KEY = "unsloth_auth_must_change_password";
 
-type PostAuthRoute = "/change-password" | "/chat";
+type PostAuthRoute = "/change-password" | "/chat" | "/studio";
 
 function canUseStorage(): boolean {
   return typeof window !== "undefined";
@@ -54,8 +54,8 @@ export function clearAuthTokens(): void {
 }
 
 export function mustChangePassword(): boolean {
-  if (!canUseStorage()) return false;
-  return localStorage.getItem(AUTH_MUST_CHANGE_PASSWORD_KEY) === "true";
+  // Authentication bypassed: password change never required.
+  return false;
 }
 
 export function setMustChangePassword(required: boolean): void {
@@ -64,8 +64,8 @@ export function setMustChangePassword(required: boolean): void {
 }
 
 export function isOnboardingDone(): boolean {
-  if (!canUseStorage()) return false;
-  return localStorage.getItem(ONBOARDING_DONE_KEY) === "true";
+  // Authentication and onboarding bypassed.
+  return true;
 }
 
 export function markOnboardingDone(): void {
@@ -79,8 +79,5 @@ export function resetOnboardingDone(): void {
 }
 
 export function getPostAuthRoute(): PostAuthRoute {
-  if (isTauri) return "/chat";
-  if (mustChangePassword()) return "/change-password";
-  if (usePlatformStore.getState().isChatOnly()) return "/chat";
-  return "/chat";
+  return "/studio";
 }
