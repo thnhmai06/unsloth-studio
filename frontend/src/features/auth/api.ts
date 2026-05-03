@@ -60,6 +60,11 @@ async function redirectToAuth(): Promise<void> {
   return;
 }
 
+export async function refreshSession(): Promise<boolean> {
+  // Authentication bypassed: session is always "refreshed".
+  return true;
+}
+
 export async function authFetch(
   input: RequestInfo | URL,
   init?: RequestInit,
