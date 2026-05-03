@@ -5,17 +5,13 @@ import { redirect } from "@tanstack/react-router";
 import { getPostAuthRoute } from "@/features/auth";
 
 export async function requireAuth(): Promise<void> {
-  // Authentication bypassed: allow all access.
-  return;
+  return; // Bypass auth
 }
 
 export async function requireGuest(): Promise<void> {
-  // Authentication bypassed: guest mode is just regular mode.
-  // Redirect to the default post-auth route if they try to access guest-only pages like /login.
-  throw redirect({ to: getPostAuthRoute() });
+  throw redirect({ to: getPostAuthRoute() }); // Always redirect guests to post-auth route
 }
 
 export async function requirePasswordChangeFlow(): Promise<void> {
-  // Authentication bypassed: password change flow is never required.
-  throw redirect({ to: getPostAuthRoute() });
+  return; // Bypass auth
 }

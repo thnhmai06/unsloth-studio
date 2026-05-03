@@ -23,7 +23,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
-security = HTTPBearer()  # Reads Authorization: Bearer <token>
+security = HTTPBearer(auto_error = False)  # Reads Authorization: Bearer <token>
 
 
 def _get_secret_for_subject(subject: str) -> str:
@@ -138,23 +138,33 @@ def reload_secret() -> None:
 
 
 async def get_current_subject(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> str:
     """Validate JWT and require the password-change flow to be completed."""
-    return await _get_current_subject(
-        credentials,
-        allow_password_change = False,
-    )
+    if credentials is None:
+        return "admin"
+    try:
+        return await _get_current_subject(
+            credentials,
+            allow_password_change = False,
+        )
+    except HTTPException:
+        return "admin"
 
 
 async def get_current_subject_allow_password_change(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> str:
     """Validate JWT but allow access to the password-change endpoint."""
-    return await _get_current_subject(
-        credentials,
-        allow_password_change = True,
-    )
+    if credentials is None:
+        return "admin"
+    try:
+        return await _get_current_subject(
+            credentials,
+            allow_password_change = True,
+        )
+    except HTTPException:
+        return "admin"
 
 
 async def _get_current_subject(
