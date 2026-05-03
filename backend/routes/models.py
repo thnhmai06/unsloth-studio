@@ -686,6 +686,10 @@ async def list_local_models(
     List local model candidates from custom models dir, HF cache,
     legacy Unsloth HF cache, and LM Studio directories.
     """
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_local_models
+        return get_mock_local_models()
+
     from utils.paths import (
         legacy_hf_cache_dir,
         hf_default_cache_dir,
@@ -1643,6 +1647,10 @@ async def scan_loras(
     Returns both training outputs (from outputs_dir) and exported models
     (from exports_dir) in a single list, distinguished by source field.
     """
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_loras
+        return get_mock_loras()
+
     try:
         resolved_outputs_dir = str(resolve_output_dir(outputs_dir))
         resolved_exports_dir = str(resolve_export_dir(exports_dir))
@@ -2375,6 +2383,10 @@ async def list_checkpoints(
 
     Scans the outputs folder for training runs and their checkpoints.
     """
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_checkpoints
+        return get_mock_checkpoints()
+
     try:
         resolved_outputs_dir = str(resolve_output_dir(outputs_dir))
         raw_models = scan_checkpoints(outputs_dir = resolved_outputs_dir)

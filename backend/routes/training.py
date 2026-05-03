@@ -90,6 +90,10 @@ async def get_hardware_utilization(
     Designed to be polled by the frontend during training.
     Returns live GPU memory usage information for the active backend.
     """
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_hardware_utilization
+        return get_mock_hardware_utilization()
+
     from utils.hardware import get_gpu_utilization
 
     return get_gpu_utilization()
@@ -99,6 +103,10 @@ async def get_hardware_utilization(
 async def get_visible_hardware_utilization(
     current_subject: str = Depends(get_current_subject),
 ):
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_hardware_utilization
+        return get_mock_hardware_utilization()
+
     from utils.hardware import get_visible_gpu_utilization
 
     return get_visible_gpu_utilization()

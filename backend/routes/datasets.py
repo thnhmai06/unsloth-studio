@@ -350,6 +350,9 @@ async def upload_dataset(
 def list_local_datasets(
     current_subject: str = Depends(get_current_subject),
 ) -> LocalDatasetsResponse:
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_datasets
+        return get_mock_datasets()
     return LocalDatasetsResponse(datasets = _build_local_dataset_items())
 
 

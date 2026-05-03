@@ -11,6 +11,7 @@ from pathlib import Path as _Path
 
 # Suppress annoying C-level dependency warnings globally
 os.environ["PYTHONWARNINGS"] = "ignore"
+os.environ["UNSLOTH_UI_MOCK"] = "1"  # Enable mock data for UI redesign
 
 # Ensure backend dir is on sys.path so _platform_compat is importable when
 # main.py is launched directly (e.g. `uvicorn main:app`).

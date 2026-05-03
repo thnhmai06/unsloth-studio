@@ -6,6 +6,7 @@ Training history API routes — browse, view, and delete past training runs.
 """
 
 import json
+import os
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from loggers import get_logger
@@ -32,6 +33,10 @@ async def list_training_runs(
     current_subject: str = Depends(get_current_subject),
 ):
     """List training runs, newest first."""
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_runs
+        return get_mock_runs()
+
     result = list_runs(limit = limit, offset = offset)
     return TrainingRunListResponse(
         runs = [TrainingRunSummary(**r) for r in result["runs"]],
@@ -45,6 +50,10 @@ async def get_training_run_detail(
     current_subject: str = Depends(get_current_subject),
 ):
     """Get a single training run with full config and metrics."""
+    if os.getenv("UNSLOTH_UI_MOCK") == "1":
+        from mock_data import get_mock_run_detail
+        return get_mock_run_detail(run_id)
+
     run = get_run(run_id)
     if run is None:
         raise HTTPException(status_code = 404, detail = f"Run {run_id} not found")
